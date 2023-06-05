@@ -1,0 +1,72 @@
+<launch>
+
+  <arg name="resolution" default="0.35"/>
+  <arg name="max_ray" default="25.0"/>
+  <arg name="traversability_radius" default="0.0"/>
+  <arg name="input_pointcloud" default="/combined_pcl"/>
+
+   <!-- <node name="simulation_eval" pkg="voxblox_ros" type="simulation_eval" output="screen" args="-alsologtostderr -v=3" clear_params="true">
+    <remap from="pointcloud" to="/os1_cloud_node/points"/>
+    <param name="tsdf_voxel_size" value="0.1" />
+    <param name="tsdf_voxels_per_side" value="16" />
+    <param name="incremental" value="false" />
+    <param name="add_robot_pose" value="false" />
+    <param name="generate_mesh" value="true" />
+    <param name="num_viewpoints" value="50" />
+    <param name="truncation_distance" value="0.4" />
+    <param name="esdf_min_distance_m" value="0.2" />
+    <param name="verbose" value="true" />
+    <param name="max_attempts_to_generate_viewpoint" value="50" />
+    <param name="world_frame" value="map" />
+  </node> -->
+
+  <node pkg="pointcloud_tools"
+        type="pcl_filter"
+        name="pcl_filter"
+        output="screen"
+        respawn="true">
+                <param name="robot_radius" value="0.4"/>
+                
+                <remap from="input" to="/os1_cloud_node/points" />
+                <remap from="pcl_filter/output" to="/pcl_filtered" />
+	</node>
+
+
+  <!-- <node pkg="topic_tools" type="relay" name="ouster_pcl" args="/pcl_filtered /combined_pcl" />
+  <node pkg="topic_tools" type="relay" name="realsense_pcl" args="/camera/depth/color/points /combined_pcl" /> -->
+
+  <node name="voxblox_node" pkg="voxblox_ros" type="esdf_server" output="screen" args="-alsologtostderr" clear_params="true">
+    <remap from="pointcloud" to="/pcl_filtered" />
+    <param name="tsdf_voxel_size" value="$(arg resolution)" />
+    <param name="tsdf_voxels_per_side" value="16" />
+    <!-- <param name="voxel_carving_enabled" value="true" /> -->
+    <param name="color_mode" value="normals"/>
+    <param name="use_tf_transforms" value="true" />
+    <param name="enable_icp" value="false" />
+    <param name="icp_iterations" value="10" />
+    <param name="verbose" value="false" />
+    <!-- <param name="update_mesh_every_n_sec" value="0.2" /> -->
+    <param name="max_ray_length_m" value="$(arg max_ray)" />
+    <!-- <param name="min_time_between_msgs_sec" value="0.2" />-->
+    <!-- <param name="slice_level" value="2.0" /> -->
+    <param name="method" value="fast" />
+    <!-- <param name="use_const_weight" value="true" /> -->
+    <!-- <param name="mesh_filename" value="$(find voxblox_ros)/mesh_results/$(anon kitti).ply" /> -->
+    <param name="mesh_filename" value="/home/tonitauler/voxblox_mesh.ply" />
+    <param name="world_frame" value="map" />
+
+    <param name="publish_pointclouds" value="true" />
+    <param name="publish_traversable" value="true" />
+    <param name="mesh_as_pointcloud" value="true" />
+    <param name="traversability_radius" value="$(arg traversability_radius)" /> 
+    <!-- <param name="use_freespace_pointcloud" value="true" />  -->
+    <param name="publish_tsdf_map" value="true" />
+    <param name="publish_esdf_map" value="true" />
+    <!-- <param name="max_block_distance_from_body" value="20.0" /> Allows to generate a local map -->
+
+    <param name="clear_sphere_for_planning" value="true"/>
+    <param name="clear_sphere_radius" value="0.4"/>
+    <param name="occupied_sphere_radius" value="$(arg max_ray)"/>
+  </node>
+
+</launch>
