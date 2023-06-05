@@ -430,10 +430,27 @@ void TsdfServer::publishAllUpdatedTsdfVoxels() {
 void TsdfServer::publishTsdfSurfacePoints() {
   // Create a pointcloud with distance = intensity.
   pcl::PointCloud<pcl::PointXYZRGB> pointcloud;
-  const float surface_distance_thresh =
-      tsdf_map_->getTsdfLayer().voxel_size() * 0.75;
-  createSurfacePointcloudFromTsdfLayer(tsdf_map_->getTsdfLayer(),
-                                       surface_distance_thresh, &pointcloud);
+  // const float surface_distance_thresh =
+  //     tsdf_map_->getTsdfLayer().voxel_size() * 0.75;
+  // createSurfacePointcloudFromTsdfLayer(tsdf_map_->getTsdfLayer(),
+  //                                      surface_distance_thresh, &pointcloud);
+
+  //START Antoni Tauler Rosselló MODIFICATION
+  // NEW Way to publish Mesh as Pointcloud 
+  std::shared_ptr<MeshLayer> mesh_layer;
+  mesh_layer.reset(new MeshLayer(tsdf_map_->getTsdfLayer().block_size()));
+  MeshIntegratorConfig mesh_config;
+  std::shared_ptr<MeshIntegrator<TsdfVoxel>> mesh_integrator;
+  mesh_integrator.reset(new MeshIntegrator<TsdfVoxel>(mesh_config, tsdf_map_->getTsdfLayer(),
+                                                      mesh_layer.get()));
+
+  constexpr bool kOnlyMeshUpdatedBlocks = false;
+  constexpr bool kClearUpdatedFlag = false;
+  mesh_integrator->generateMesh(kOnlyMeshUpdatedBlocks, kClearUpdatedFlag);
+
+  fillPointcloudWithMesh(mesh_layer, ColorMode::kNormals, &pointcloud);
+
+  //END Antoni Tauler Rosselló MODIFICATION
 
   pointcloud.header.frame_id = world_frame_;
   surface_pointcloud_pub_.publish(pointcloud);
