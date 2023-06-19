@@ -10,6 +10,7 @@
 
   3. Once the mesh is done save the .ply using the voxblox service as follows:
     rosservice call /voxblox_node/generate_mesh
+    rosservice call /mussol/voxblox_node/generate_mesh
   The mesh will be saved into the path_folder directory
   -->
    
@@ -19,6 +20,7 @@
   <arg name="max_range" default="15.0" />
   <arg name="icp" default="True" />
   <arg name="voxblox" default="True" />
+  <arg name="vb_mode" default="simple" /> <!-- fast, merged or simple -->
   <arg name="pc_filter" default="False" />
   <arg name="rviz" default="True" />
 
@@ -70,7 +72,7 @@
         <remap from="pointcloud" to="/pcl_filtered" if="$(arg pc_filter)"/>
         <remap from="pointcloud" to="os_cloud/points" unless="$(arg pc_filter)"/>
         <param name="tsdf_voxel_size" value="$(arg resolution)" />
-        <param name="tsdf_voxels_per_side" value="32" /> <!-- 16 -->
+        <param name="tsdf_voxels_per_side" value="16" /> <!-- 16 -->
         <param name="color_mode" value="normals"/>
         <param name="use_tf_transforms" value="true" /> <!-- If false you have to publish the transform: world_frame -> sensor
                                                         to topic "transform" of type geometry_msgs::TransformStamped -->
@@ -92,11 +94,28 @@
         <param name="max_ray_length_m" value="$(arg max_range)"/>
         <param name="min_ray_length_m" value="$(arg robot_radius)"/>
         <!-- <param name="update_mesh_every_n_sec" value="0.1"/> -->
-        <param name="method" value="simple" /> <!-- fast, merged or simple -->
-        <param name="mesh_filename" value="$(arg path_folder)/$(arg mesh_name).ply" />
+        <param name="method" value="$(arg vb_mode)"/> <!-- fast, merged or simple -->
+        <param name="mesh_filename" value="$(arg path_folder)/$(arg mesh_name)_$(arg resolution)_$(arg vb_mode).ply" />
         <!-- <param name="world_frame" value="odom" /> -->
         <param name="world_frame" value="mussol/nav" />
         <param name="sensor_frame" value="" /> <!-- "" means directly frame of the input pointcloud header-->
+
+        <param name="allow_clear" value="True" />
+        <param name="clearing_ray_weight_factor" value="0.01" />
+        <param name="max_weight" value="200" />
+        <param name="mesh_min_weight" value="1e-4" />
+        <param name="max_consecutive_ray_collisions" value="2" />
+        <param name="occupancy_min_distance_voxel_size_factor" value="1.0" />
+        <param name="sparsity_compensation_factor" value="50.0" />
+        <param name="use_sparsity_compensation_factor" value="True" />
+        <param name="truncation_distance" value="0.6" />
+        <param name="weight_ray_by_range" value="False" />
+        <param name="use_weight_dropoff" value="True" />
+        <param name="use_symmetric_weight_drop_off" value="False" />
+        <param name="voxel_carving_enabled" value="True" />
+        <param name="timestamp_tolerance_sec" value="0.001" />
+        <param name="integration_order_mode" value="sorted" />  
+        <param name="pointcloud_queue_size" value="1000" />
 
       </node>
     </group>
