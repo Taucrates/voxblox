@@ -24,6 +24,7 @@ EsdfServer::EsdfServer(const ros::NodeHandle& nh,
                  mesh_config),
       clear_sphere_for_planning_(false),
       publish_esdf_map_(false),
+      publish_pointclouds_(false),
       publish_traversable_(false),
       traversability_radius_(1.0),
       incremental_update_(true),
@@ -59,6 +60,10 @@ void EsdfServer::setupRos() {
   nh_private_.param("clear_sphere_for_planning", clear_sphere_for_planning_,
                     clear_sphere_for_planning_);
   nh_private_.param("publish_esdf_map", publish_esdf_map_, publish_esdf_map_);
+
+  // Publish pointclouds or not
+  nh_private_.param("publish_pointclouds", publish_pointclouds_,
+                   publish_pointclouds_);
 
   // Special output for traversable voxels. Publishes all voxels with distance
   // at least traversibility radius.
@@ -240,7 +245,7 @@ void EsdfServer::esdfMapCallback(const voxblox_msgs::Layer& layer_msg) {
     ROS_ERROR_THROTTLE(10, "Got an invalid ESDF map message!");
   } else {
     ROS_INFO_ONCE("Got an ESDF map from ROS topic!");
-    publishPointclouds();
+    if(publish_pointclouds_)publishPointclouds();
   }
 }
 

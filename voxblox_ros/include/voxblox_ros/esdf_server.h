@@ -97,6 +97,7 @@ class EsdfServer : public TsdfServer {
 
   bool clear_sphere_for_planning_;
   bool publish_esdf_map_;
+  bool publish_pointclouds_;
   bool publish_traversable_;
   float traversability_radius_;
   bool incremental_update_;
