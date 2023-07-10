@@ -2,7 +2,7 @@
 
   <arg name="resolution" default="0.35"/>
   <arg name="max_ray" default="25.0"/>
-  <arg name="traversability_radius" default="0.0"/>
+  <arg name="traversability_radius" default="1.0"/>
 
   <!-- Nodes to publish to same topic to generate octomap -->
 	<!-- <node pkg="topic_tools" type="transform" name="transform1" args="/os1_cloud_node/points /combined_pcl sensor_msgs/PointCloud2 'm'"/> -->
