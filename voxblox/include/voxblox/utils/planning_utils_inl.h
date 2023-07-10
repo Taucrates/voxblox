@@ -29,9 +29,13 @@ void getSphereAroundPoint(const Layer<VoxelType>& layer, const Point& center,
 
         // check if point is inside the spheres radius
         if (point_voxel_space.norm() <= radius_in_voxels) {
-          GlobalIndex voxel_offset_index(std::floor(point_voxel_space.x()),
-                                         std::floor(point_voxel_space.y()),
-                                         std::floor(point_voxel_space.z()));
+          // ORIGINAL
+          // GlobalIndex voxel_offset_index(std::floor(point_voxel_space.x()),
+                                        //  std::floor(point_voxel_space.y()),
+                                        //  std::floor(point_voxel_space.z()));
+          GlobalIndex voxel_offset_index(std::round(point_voxel_space.x()),
+                                         std::round(point_voxel_space.y()),
+                                         std::round(point_voxel_space.z()));
           // Get the block and voxel indices from this.
           BlockIndex block_index;
           VoxelIndex voxel_index;
