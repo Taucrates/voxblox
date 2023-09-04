@@ -3,6 +3,8 @@
   <arg name="resolution" default="0.35"/>
   <arg name="max_ray" default="25.0"/>
   <arg name="traversability_radius" default="0.0"/>
+  <arg name="clear_sphere" default="0.5"/>
+  <arg name="occ_sphere" default="1.2"/>
 
   <!-- Nodes to publish to same topic to generate octomap -->
 	<!-- <node pkg="topic_tools" type="transform" name="transform1" args="/os1_cloud_node/points /combined_pcl sensor_msgs/PointCloud2 'm'"/> -->
@@ -55,7 +57,8 @@
     <param name="publish_traversable" value="false" />
     <param name="mesh_as_pointcloud" value="false" />
     <param name="traversability_radius" value="$(arg traversability_radius)" /> 
-    <!-- <param name="use_freespace_pointcloud" value="true" />  -->
+    <param name="use_freespace_pointcloud" value="false" /> 
+    <param name="freespace_pointcloud" value="/os1_cloud_node/points" /> 
     <param name="publish_tsdf_map" value="true" />
     <param name="publish_esdf_map" value="true" />
     <!-- <param name="max_block_distance_from_body" value="20.0" /> Allows to generate a local map -->
@@ -79,9 +82,9 @@
     <!-- <param name="pointcloud_queue_size" value="1000" /> -->
 
 
-    <param name="clear_sphere_for_planning" value="false"/>
-    <param name="clear_sphere_radius" value="1.0"/>
-    <param name="occupied_sphere_radius" value="$(arg max_ray)"/>
+    <param name="clear_sphere_for_planning" value="true"/>
+    <param name="clear_sphere_radius" value="$(arg clear_sphere)"/>
+    <param name="occupied_sphere_radius" value="$(arg occ_sphere)"/>
 
   </node>
 
