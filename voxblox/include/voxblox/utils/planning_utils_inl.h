@@ -33,6 +33,7 @@ void getSphereAroundPoint(const Layer<VoxelType>& layer, const Point& center,
           // GlobalIndex voxel_offset_index(std::floor(point_voxel_space.x()),
                                         //  std::floor(point_voxel_space.y()),
                                         //  std::floor(point_voxel_space.z()));
+          // Modification
           GlobalIndex voxel_offset_index(std::round(point_voxel_space.x()),
                                          std::round(point_voxel_space.y()),
                                          std::round(point_voxel_space.z()));
@@ -102,6 +103,42 @@ void fillSphereAroundPoint(const Point& center, const FloatingPoint radius,
   }
 }
 
+template <typename VoxelType>
+void setFreeSphereAroundPoint(const Point& center, const FloatingPoint radius,
+                           const FloatingPoint max_distance_m,
+                           Layer<VoxelType>* layer) {
+  CHECK_NOTNULL(layer);
+  HierarchicalIndexMap block_voxel_list;
+  getAndAllocateSphereAroundPoint(center, radius, layer, &block_voxel_list);
+
+  for (auto it = block_voxel_list.begin(); it != block_voxel_list.end(); ++it) {
+    typename Block<VoxelType>::Ptr block_ptr =
+        layer->getBlockPtrByIndex(it->first);
+    for (const VoxelIndex& voxel_index : it->second) {
+      Point point = block_ptr->computeCoordinatesFromVoxelIndex(voxel_index);
+      Point voxel_center_vec = point - center;
+
+      VoxelType& voxel = block_ptr->getVoxelByVoxelIndex(voxel_index);
+      // The distance of the voxel should map to actual meaningful
+      // Euclidean distance; in this case, the sphere center has the max
+      // distance, and the edges should have the lowest distance.
+      // Also compress this to the max distance given.
+      const FloatingPoint new_distance =
+          std::max(voxel_center_vec.norm() - radius, -max_distance_m);
+
+      // if (!voxel.observed || new_distance < voxel.distance) {
+        voxel.distance = 0.0;
+        voxel.weight = 10;
+        // voxel.observed = true;
+        // voxel.hallucinated = true;
+        // voxel.fixed = true;
+        block_ptr->updated().set();
+        block_ptr->has_data() = true;
+      // }
+    }
+  }
+}
+
 // Similar to above, clears the area around the specified point, marking it as
 // hallucinated and fixed.
 template <typename VoxelType>
@@ -122,17 +159,17 @@ void clearSphereAroundPoint(const Point& center, const FloatingPoint radius,
       VoxelType& voxel = block_ptr->getVoxelByVoxelIndex(voxel_index);
       // How far is voxel from edge of free sphere. The values should be
       // biggest in the center, smallest outside.
-      const FloatingPoint new_distance =
-          std::min(radius - voxel_center_vec.norm(), max_distance_m);
+      const FloatingPoint new_distance = 1.0;
+          // std::min(radius - voxel_center_vec.norm(), max_distance_m);
 
-      if (!voxel.observed || new_distance > voxel.distance) {
+      // if (!voxel.observed || new_distance > voxel.distance) {
         voxel.distance = new_distance;
         voxel.observed = true;
         voxel.hallucinated = true;
         voxel.fixed = true;
         block_ptr->updated().set();
         block_ptr->has_data() = true;
-      }
+      // }
     }
   }
 }

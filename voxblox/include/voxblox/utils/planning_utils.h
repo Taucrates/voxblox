@@ -30,6 +30,12 @@ template <typename VoxelType>
 void fillSphereAroundPoint(const Point& center, const FloatingPoint radius,
                            const FloatingPoint max_distance_m,
                            Layer<VoxelType>* layer);
+
+template <typename VoxelType>
+void setFreeSphereAroundPoint(const Point& center, const FloatingPoint radius,
+                           const FloatingPoint max_distance_m,
+                           Layer<VoxelType>* layer);
+
 template <typename VoxelType>
 void clearSphereAroundPoint(const Point& center, const FloatingPoint radius,
                             const FloatingPoint max_distance_m,
