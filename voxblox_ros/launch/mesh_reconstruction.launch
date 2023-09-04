@@ -22,7 +22,8 @@
   -->
    
   <arg name="manual" default="false" /> 
-  <arg name="namespace" default="/" /> 
+  <!-- <arg name="namespace" default="/" />  -->
+  <arg name="namespace" default="mussol" /> 
   <arg name="robot_radius" default="0.55" />
   <arg name="resolution" default="0.15" />
   <arg name="max_range" default="10.0" />
@@ -146,7 +147,7 @@
 
   <!-- RVIZ -->   
   <group if="$(arg rviz)"> 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d /home/tonitauler/ROS/drone_ws/src/m100_simulation/rviz/rosbag_drone.rviz" output="log"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d /home/tonitauler/ROS/exploration_ws/src/voxblox/voxblox_ros/rviz/rosbag_drone.rviz" output="log"/>
   </group>
 
 </launch>
