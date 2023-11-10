@@ -26,12 +26,15 @@
   <arg name="namespace" default="mussol" /> 
   <arg name="robot_radius" default="0.55" />
   <arg name="resolution" default="0.15" />
-  <arg name="max_range" default="10.0" />
+  <arg name="max_range" default="50.0" />
   <arg name="icp" default="True" />
   <arg name="voxblox" default="true" />
   <arg name="vb_mode" default="simple" /> <!-- fast, merged or simple -->
   <arg name="pc_filter" default="False" />
   <arg name="rviz" default="True" />
+  <arg name="auto_save" default="True" />
+  <arg name="paused" default="True" />
+  <arg name="height_threshold" default="1.0" />
 
  
 
@@ -49,6 +52,23 @@
     </node>
   </group>
 
+  <!-- GPS -->
+  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true">
+
+    <param name="magnetic_declination_radians" value="-0.0229801685"/>
+
+    <param name="yaw_offset" value="-1.57"/>
+
+    <remap from="/imu/data" to="/mussol/dji_sdk/imu" />
+    <remap from="/gps/fix" to="/mussol/emlid_gps" />
+    <remap from="/odometry/filtered" to="/mussol/ekf_local/odom" />
+
+  </node>
+
+  <node pkg="tf" type="static_transform_publisher" name="gps_to_mussol" args="0 0 0 0 0 0 /mussol /gps 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="imu_to_mussol" args="0 0 0 0 0 0 /mussol /body_FLU 100"/>
+  <!-- END GPS -->
+
   <group unless="$(arg manual)">
     <node name="automesh" pkg="voxblox_ros" type="automesh.py" output="screen">
       <param name="path" type="string" value="$(arg path_folder)"/>
@@ -56,6 +76,9 @@
       <param name="vb_mode" type="string" value="$(arg vb_mode)"/>
       <param name="namespace" type="string" value="$(arg namespace)"/>
       <param name="rate" type="double" value="$(arg rosbag_rate)"/>
+      <param name="auto_save" type="bool" value="$(arg auto_save)"/>
+      <param name="paused" type="bool" value="$(arg paused)"/>
+      <param name="height_threshold" type="double" value="$(arg height_threshold)"/>
     </node>
   </group>
 
@@ -93,27 +116,32 @@
         <remap from="pointcloud" to="os_cloud/points" unless="$(arg pc_filter)"/>
         <param name="tsdf_voxel_size" value="$(arg resolution)" />
         <param name="tsdf_voxels_per_side" value="16" /> <!-- 16 -->
-        <param name="color_mode" value="normals"/>
         <param name="use_tf_transforms" value="true" /> <!-- If false you have to publish the transform: world_frame -> sensor
                                                         to topic "transform" of type geometry_msgs::TransformStamped -->
+
+        <!-- Colorization -->
+        <param name="color_mode" value="normals"/> <!-- color, height, normals, lambert, lambert_color or gray -->
+        <param name="intensity_colormap" value="rainbow"/> <!-- rainbow, inverse_rainbow, grayscale, inverse_grayscale or ironbow -->
+        <param name="intensity_max_value" value="255.0"/> 
+        
         
         <!-- ICP -->
         <param name="enable_icp" value="$(arg icp)" />
-        <param name="icp_iterations" value="10" />
+        <param name="accumulate_icp_corrections" value="True" />
+        <param name="icp_refine_roll_pitch" value="True" />
+        <param name="icp_iterations" value="200000" />
         <param name="icp_mini_batch_size" value="20" />
-        <param name="icp_subsample_keep_ratio" value="0.5" />
-        <param name="icp_min_match_ratio" value="0.8" />
-        <param name="icp_inital_translation_weighting" value="1000.0" />
-        <param name="icp_inital_rotation_weighting" value="100.0" />
-
-        <param name="use_const_weight" value="true" />
+        <param name="icp_subsample_keep_ratio" value="3.5" />
+        <param name="icp_min_match_ratio" value="0.5" />
+        <param name="icp_inital_translation_weighting" value="1.0" /> <!-- 1.0 -->
+        <param name="icp_inital_rotation_weighting" value="10.0" /> <!-- 10.0 -->
 
 
         <param name="verbose" value="false" />
-        <param name="allow_clear" value="false" />
+        <param name="allow_clear" value="True" />
         <param name="max_ray_length_m" value="$(arg max_range)"/>
         <param name="min_ray_length_m" value="$(arg robot_radius)"/>
-        <!-- <param name="update_mesh_every_n_sec" value="0.1"/> -->
+        <param name="update_mesh_every_n_sec" value="0.1"/>
         <param name="method" value="$(arg vb_mode)"/> <!-- fast, merged or simple -->
         <!-- <param name="mesh_filename" value="$(arg path_folder)/$(arg mesh_name)_$(arg resolution)_$(arg vb_mode).ply" /> -->
         <param name="mesh_filename" value="$(arg path_folder)/mesh_$(arg resolution)_$(arg vb_mode).ply" />
@@ -124,21 +152,19 @@
 
         <param name="sensor_frame" value="" /> <!-- "" means directly frame of the input pointcloud header-->
 
-        <param name="allow_clear" value="True" />
         <param name="clearing_ray_weight_factor" value="0.01" />
         <param name="max_weight" value="200" />
         <param name="mesh_min_weight" value="1e-4" />
         <param name="max_consecutive_ray_collisions" value="2" />
         <param name="occupancy_min_distance_voxel_size_factor" value="1.0" />
-        <param name="sparsity_compensation_factor" value="50.0" />
-        <param name="use_sparsity_compensation_factor" value="True" />
-        <param name="truncation_distance" value="0.6" />
+        <param name="truncation_distance" value="$(eval 4.* arg('resolution'))" /><!-- 0.6 -->
+        <param name="use_const_weight" value="False" /> <!-- True -->
         <param name="weight_ray_by_range" value="False" />
         <param name="use_weight_dropoff" value="True" />
         <param name="use_symmetric_weight_drop_off" value="False" />
         <param name="voxel_carving_enabled" value="True" />
-        <param name="timestamp_tolerance_sec" value="0.001" />
-        <param name="integration_order_mode" value="sorted" />  
+        <param name="timestamp_tolerance_sec" value="0.3" />
+        <param name="integration_order_mode" value="sorted" />  <!-- sorted or mixed -->
         <param name="pointcloud_queue_size" value="1000" />
 
       </node>
