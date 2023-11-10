@@ -1,0 +1,17 @@
+<launch>
+
+
+
+  <!-- Pointcloud Free -->
+  <node pkg="pointcloud_tools"
+            type="pointcloud_free"
+            name="pointcloud_free"
+            output="screen"
+            respawn="true">
+                <remap from="input" to="/mussol/os_cloud/points" />
+                <remap from="output" to="/pcl_free" />
+  </node>
+  
+
+
+</launch>

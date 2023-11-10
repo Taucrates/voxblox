@@ -6,7 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Lihash1/Map1
-        - /Voxblox1
+        - /LiODOM1/Shape1
+        - /GPS1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 719
   - Class: rviz/Selection
@@ -26,7 +27,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -75,7 +76,7 @@ Visualization Manager:
           Radius: 0.029999999329447746
           Shaft Diameter: 0.10000000149011612
           Shaft Length: 0.10000000149011612
-          Topic: /mission_manager/mission_path
+          Topic: /mussol/mission_manager/mission_path
           Unreliable: false
           Value: true
         - Alpha: 1
@@ -99,10 +100,10 @@ Visualization Manager:
           Radius: 0.029999999329447746
           Shaft Diameter: 0.10000000149011612
           Shaft Length: 0.10000000149011612
-          Topic: /mission_manager/wp_path
+          Topic: /mussol/mission_manager/wp_path
           Unreliable: false
           Value: true
-      Enabled: false
+      Enabled: true
       Name: Mission Manager
     - Class: rviz/Group
       Displays:
@@ -237,7 +238,7 @@ Visualization Manager:
         Value: true
       Enabled: true
       Keep: 100
-      Name: Odometry
+      Name: EKF Local
       Position Tolerance: 0.10000000149011612
       Queue Size: 10
       Shape:
@@ -250,9 +251,79 @@ Visualization Manager:
         Shaft Length: 1
         Shaft Radius: 0.05000000074505806
         Value: Arrow
+      Topic: /mussol/ekf_local/odom
+      Unreliable: false
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 100
+      Name: LiODOM
+      Position Tolerance: 0.10000000149011612
+      Queue Size: 10
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 255; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
       Topic: /mussol/liodom/odom
       Unreliable: false
       Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: false
+      Keep: 100
+      Name: GPS
+      Position Tolerance: 0.10000000149011612
+      Queue Size: 10
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 55; 55; 255
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic: /odometry/gps
+      Unreliable: false
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -283,18 +354,40 @@ Visualization Manager:
       Value: true
     - Class: rviz/TF
       Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        cam0:
+        body_FLU:
+          Value: true
+        fiducial_101:
+          Value: true
+        fiducial_102:
+          Value: true
+        fiducial_103:
+          Value: true
+        fiducial_105:
+          Value: true
+        fiducial_107:
           Value: true
         global:
           Value: true
-        imu:
+        gps:
+          Value: true
+        icp_corrected:
           Value: true
         mussol:
           Value: true
+        mussol/camera:
+          Value: true
         mussol/camera_link:
+          Value: true
+        mussol/est:
+          Value: true
+        mussol/imu_dji:
+          Value: true
+        mussol/lio_sensor:
           Value: true
         mussol/nav:
           Value: true
@@ -304,7 +397,11 @@ Visualization Manager:
           Value: true
         mussol/os_sensor:
           Value: true
+        mussol/uwb:
+          Value: true
         mussol_hori:
+          Value: true
+        pose_corrected:
           Value: true
       Marker Alpha: 1
       Marker Scale: 1
@@ -313,17 +410,41 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        mussol/nav:
-          mussol:
-            mussol/camera_link:
-              {}
-            mussol/os_sensor:
-              mussol/os_imu:
+        global:
+          mussol/est:
+            mussol/imu_dji:
+              mussol/lio_sensor:
                 {}
-              mussol/os_lidar:
+              mussol/uwb:
                 {}
-            mussol_hori:
-              {}
+            mussol/nav:
+              icp_corrected:
+                pose_corrected:
+                  {}
+              mussol:
+                body_FLU:
+                  {}
+                gps:
+                  {}
+                mussol/camera_link:
+                  {}
+                mussol/os_sensor:
+                  mussol/os_imu:
+                    mussol/camera:
+                      fiducial_101:
+                        {}
+                      fiducial_102:
+                        {}
+                      fiducial_103:
+                        {}
+                      fiducial_105:
+                        {}
+                      fiducial_107:
+                        {}
+                  mussol/os_lidar:
+                    {}
+                mussol_hori:
+                  {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -354,7 +475,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.383520126342773
+      Distance: 21.307432174682617
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -362,17 +483,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -1.6990022659301758
-        Y: 0.10839328169822693
-        Z: 2.7222023010253906
+        X: 3.3163065910339355
+        Y: 0.08653449267148972
+        Z: 2.7657740116119385
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8853983879089355
+      Pitch: 0.2147963047027588
       Target Frame: <Fixed Frame>
-      Yaw: 3.1453986167907715
+      Yaw: 3.090402364730835
     Saved: ~
 Window Geometry:
   Displays:
