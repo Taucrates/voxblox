@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import rospy
 import os
 from std_msgs.msg import String
@@ -16,9 +17,9 @@ import signal
 def rosBagPlay(rate=1.0, start=0.0, duration=1000.0, cont_folder="", paused=True):
 
     if(paused):
-        comando_bash = f"rosbag play --pause --rate {rate} --start {start} --duration {duration} {cont_folder}/*/m*.bag {cont_folder}/*/p*.bag"
+        comando_bash = f"rosbag play --clock --pause --rate {rate} --start {start} --duration {duration} {cont_folder}/*/m*.bag {cont_folder}/*/p*.bag"
     else:
-        comando_bash = f"rosbag play --rate {rate} --start {start} --duration {duration} {cont_folder}/*/m*.bag {cont_folder}/*/p*.bag"
+        comando_bash = f"rosbag play --clock --rate {rate} --start {start} --duration {duration} {cont_folder}/*/m*.bag {cont_folder}/*/p*.bag"
 
     # Ejecutar el comando de bash
     try:

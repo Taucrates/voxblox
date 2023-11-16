@@ -36,6 +36,8 @@
   <arg name="paused" default="True" />
   <arg name="height_threshold" default="1.0" />
 
+  <param name="use_sim_time" value="true"/>
+
  
 
   <!-- Rosbag play -->
@@ -53,7 +55,7 @@
   </group>
 
   <!-- GPS -->
-  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true">
+  <!-- <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true">
 
     <param name="magnetic_declination_radians" value="-0.0229801685"/>
 
@@ -66,7 +68,7 @@
   </node>
 
   <node pkg="tf" type="static_transform_publisher" name="gps_to_mussol" args="0 0 0 0 0 0 /mussol /gps 100"/>
-  <node pkg="tf" type="static_transform_publisher" name="imu_to_mussol" args="0 0 0 0 0 0 /mussol /body_FLU 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="imu_to_mussol" args="0 0 0 0 0 0 /mussol /body_FLU 100"/> -->
   <!-- END GPS -->
 
   <group unless="$(arg manual)">
@@ -171,9 +173,12 @@
     </group>
   </group>
 
+  <!-- TF_2_POSE -->
+  <node name="tf_2_pose" pkg="voxblox_ros" type="tf_2_pose.py" output="log"/>
+
   <!-- RVIZ -->   
-  <group if="$(arg rviz)"> 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d /home/tonitauler/ROS/exploration_ws/src/voxblox/voxblox_ros/rviz/rosbag_drone.rviz" output="log"/>
+  <group if="$(arg rviz)">  
+    <node name="rviz" pkg="rviz" type="rviz" args="-d /home/tonitauler/ROS/catkin_ws/src/tools/voxblox/voxblox_ros/rviz/rosbag_drone.rviz" output="log"/>
   </group>
 
 </launch>
