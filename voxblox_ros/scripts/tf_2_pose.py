@@ -25,17 +25,20 @@ if __name__ == '__main__':
     listener = tf.TransformListener()
 
     pose_pub = rospy.Publisher('~pose', geometry_msgs.msg.PoseWithCovarianceStamped,queue_size=1)
+    last_timestamp = 0.0
 
     rate = rospy.Rate(frequency)
     while not rospy.is_shutdown():
         try:
             (trans,rot) = listener.lookupTransform(input_frame1, input_frame2, rospy.Time(0))
+            timestamp = listener.getLatestCommonTime(input_frame1, input_frame2)  # Get the latest timestamp
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
 
         pose_msg = geometry_msgs.msg.PoseWithCovarianceStamped()
 
-        pose_msg.header.stamp = rospy.get_rostime()
+        # pose_msg.header.stamp = rospy.get_rostime()
+        pose_msg.header.stamp = timestamp
         pose_msg.header.frame_id = output_frame
 
         pose_msg.pose.pose.position.x = trans[0]
@@ -54,6 +57,9 @@ if __name__ == '__main__':
         pose_msg.pose.covariance[28] = covariance_pitch
         pose_msg.pose.covariance[35] = covariance_yaw
         
-        pose_pub.publish(pose_msg)
+        if(last_timestamp != timestamp):
+            pose_pub.publish(pose_msg)
+            
+        last_timestamp = timestamp
 
         rate.sleep()
