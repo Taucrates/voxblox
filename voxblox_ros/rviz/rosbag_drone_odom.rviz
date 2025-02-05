@@ -4,7 +4,9 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /Lihash1/Map1
+        - /Voxblox1
         - /Voxblox1/VoxbloxMesh1
         - /LiODOM1/Shape1
         - /GPS1/Shape1
@@ -186,7 +188,7 @@ Visualization Manager:
           Enabled: true
           Name: VoxbloxMesh
           Queue Size: 10
-          Topic: /mussol/voxblox_node/mesh
+          Topic: /voxblox_node/mesh
           Unreliable: false
           Value: true
         - Alpha: 1
@@ -444,7 +446,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: mussol/nav
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -468,7 +470,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 21.307432174682617
+      Distance: 22.78635025024414
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -476,17 +478,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 3.3163065910339355
-        Y: 0.08653449267148972
-        Z: 2.7657740116119385
+        X: 2.9117298126220703
+        Y: 0.12335529178380966
+        Z: 0.9050955176353455
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.2147963047027588
+      Pitch: 0.2347961962223053
       Target Frame: <Fixed Frame>
-      Yaw: 3.090402364730835
+      Yaw: 3.135401487350464
     Saved: ~
 Window Geometry:
   Displays:
