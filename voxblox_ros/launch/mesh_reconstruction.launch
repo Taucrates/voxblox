@@ -174,7 +174,7 @@
   </group>
 
   <!-- TF_2_POSE -->
-  <node name="tf_2_pose" pkg="voxblox_ros" type="tf_2_pose.py" output="log"/>
+  <!-- <node name="tf_2_pose" pkg="voxblox_ros" type="tf_2_pose.py" output="log"/> -->
 
   <!-- RVIZ -->   
   <group if="$(arg rviz)">  
