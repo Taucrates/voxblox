@@ -159,6 +159,9 @@ void EsdfServer::publishMap(bool reset_remote_map) {
       // inconsistent map states.
       reset_remote_map = true;
     }
+    //Llevar
+    reset_remote_map = false;
+    //Llevar
     const bool only_updated = !reset_remote_map;
     timing::Timer publish_map_timer("map/publish_esdf");
     voxblox_msgs::Layer layer_msg;

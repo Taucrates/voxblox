@@ -14,7 +14,12 @@ namespace voxblox {
 
 namespace Update {
 /// Status of which derived things still need to be updated.
-enum Status { kMap, kMesh, kEsdf, kCount };
+// kMap   -> map updated, used to be always 1
+// kMesh  -> The mesh must be updated
+// kEsdf  -> The Esdf layer must be updated
+// kSend  -> The block is sent (ROS) (Toni Tauler modification)
+// kCount -> Number of members of the bitset 
+enum Status { kMap, kMesh, kEsdf, kSend, kCount };
 }
 
 /** An n x n x n container holding VoxelType. It is aware of its 3D position and

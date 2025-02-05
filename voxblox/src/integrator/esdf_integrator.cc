@@ -146,6 +146,9 @@ void EsdfIntegrator::updateFromTsdfBlocks(const BlockIndexList& tsdf_blocks,
         esdf_layer_->allocateBlockPtrByIndex(block_index);
     esdf_block->set_updated(true);
 
+    // This block has to be serialized to be sent
+    esdf_block->updated().set(Update::kSend);
+
     const size_t num_voxels_per_block = tsdf_block->num_voxels();
     for (size_t lin_index = 0u; lin_index < num_voxels_per_block; ++lin_index) {
       const TsdfVoxel& tsdf_voxel =
