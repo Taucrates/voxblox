@@ -128,7 +128,7 @@ def automesh():
         # Merging vertices (needed in next steps)
         ms.meshing_merge_close_vertices()
         # Adding ambient occlusion 
-        ms.compute_scalar_ambient_occlusion(usegpu=True)
+        # ms.compute_scalar_ambient_occlusion(usegpu=True)
         # Delete Isolated Faces
         ms.meshing_remove_connected_component_by_face_number(mincomponentsize=200)
         # Closing small holes
