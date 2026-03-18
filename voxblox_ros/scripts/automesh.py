@@ -59,6 +59,7 @@ def automesh():
     bagfiles_path = rospy.get_param('~path','/home/tonitauler/Desktop/Bagflies')
     bagfiles_path = bagfiles_path
     resolution = rospy.get_param('~resolution', 0.1)
+    icp = rospy.get_param('~icp', True)
     voxblox_mode = rospy.get_param('~vb_mode','simple')
     rate = rospy.get_param('~rate', 1.0)
     namespace = rospy.get_param('~namespace', '')
@@ -121,7 +122,7 @@ def automesh():
         else:
             saveMesh(namespace= '/' + namespace)
 
-        mesh_file_name = "mesh_" + str(resolution) + "_" + voxblox_mode
+        mesh_file_name = "mesh_" + str(resolution) + "_" + voxblox_mode  
 
         ## Refining mesh
         ms.load_new_mesh(bagfiles_path + '/' + mesh_file_name + '.ply')
@@ -129,6 +130,7 @@ def automesh():
         ms.meshing_merge_close_vertices()
         # Adding ambient occlusion 
         # ms.compute_scalar_ambient_occlusion(usegpu=True)
+        ms.compute_scalar_ambient_occlusion()
         # Delete Isolated Faces
         ms.meshing_remove_connected_component_by_face_number(mincomponentsize=200)
         # Closing small holes
@@ -140,6 +142,12 @@ def automesh():
         # ms.apply_coord_laplacian_smoothing()
         ms.apply_coord_hc_laplacian_smoothing()
         
+        # Change name indicating if ICP was applied or not
+        if(icp):
+            mesh_file_name += "_icp"
+        else:
+            mesh_file_name += "_noicp"
+
         ## Export to different formats (.off, .dae)
         ms.save_current_mesh(bagfiles_path + '/' + mesh_file_name + '.ply')
         ms.save_current_mesh(bagfiles_path + '/' + mesh_file_name + '.dae')

@@ -35,10 +35,14 @@
   <arg name="auto_save" default="True" />
   <arg name="paused" default="True" />
   <arg name="height_threshold" default="1.0" />
+  <arg name="calc_traj_error" default="True" />
 
   <param name="use_sim_time" value="true"/>
 
- 
+
+  <!-- Trajectory error calculation -->
+  <arg name="pos" default="mussol" />
+  <arg name="corrected" default="pose_corrected" />
 
   <!-- Rosbag play -->
   <arg name="path_folder" default="/home/tonitauler/Desktop/Bagflies" />
@@ -75,6 +79,7 @@
     <node name="automesh" pkg="voxblox_ros" type="automesh.py" output="screen">
       <param name="path" type="string" value="$(arg path_folder)"/>
       <param name="resolution" type="double" value="$(arg resolution)"/>
+      <param name="icp" type="bool" value="$(arg icp)"/>
       <param name="vb_mode" type="string" value="$(arg vb_mode)"/>
       <param name="namespace" type="string" value="$(arg namespace)"/>
       <param name="rate" type="double" value="$(arg rosbag_rate)"/>
@@ -171,10 +176,24 @@
 
       </node>
     </group>
+
+    <group if="$(arg calc_traj_error)">
+      <node pkg="voxblox_ros" type="tf_calc_error.py" name="tf_comparator" output="screen">
+          <param name="frame_ref" value="$(arg pos)" />
+          <param name="frame_target" value="$(arg corrected)" />
+      </node>
+    </group>
+
   </group>
 
   <!-- TF_2_POSE -->
   <!-- <node name="tf_2_pose" pkg="voxblox_ros" type="tf_2_pose.py" output="log"/> -->
+
+  <!-- TF_2_Odom -->
+  <node name="tf_2_odom" pkg="voxblox_ros" type="tf_2_odom.py" output="log"/>
+
+  <!-- TF_2_Odom -->
+  <node name="tf_2_path" pkg="voxblox_ros" type="tf_2_path.py" output="log"/>
 
   <!-- RVIZ -->   
   <group if="$(arg rviz)">  
