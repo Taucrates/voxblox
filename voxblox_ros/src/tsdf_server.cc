@@ -596,7 +596,9 @@ bool TsdfServer::loadMap(const std::string& file_path) {
   // the TSDF layer.
   constexpr bool kMulitpleLayerSupport = true;
   bool success = io::LoadBlocksFromFile(
-      file_path, Layer<TsdfVoxel>::BlockMergingStrategy::kReplace,
+      // NEW TONI TAULER
+      // file_path, Layer<TsdfVoxel>::BlockMergingStrategy::kReplace,
+      file_path, Layer<TsdfVoxel>::BlockMergingStrategy::kMerge,
       kMulitpleLayerSupport, tsdf_map_->getTsdfLayerPtr());
   if (success) {
     LOG(INFO) << "Successfully loaded TSDF layer.";
